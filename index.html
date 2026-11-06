@@ -555,13 +555,13 @@
   </main>
 
   <footer class="version-footer">
-    Version <span id="appVersion">1.2.3</span><br>
+    Version <span id="appVersion">1.2.4</span><br>
     © 2026 Nazreen Misrawi
   </footer>
 
 
   <script>
-    const APP_VERSION = "1.2.3";
+    const APP_VERSION = "1.2.4";
 
     const AUDIO_TRACKS = [
       { id: 1, title: "Ruqyah Ain", filename: "Ruqyah Ain.mpeg", path: "public/audio/Ruqyah Ain.mpeg", description: "Plays first" },
@@ -631,7 +631,7 @@
       statusEl.style.display = 'block';
 
       let attempts = 0;
-      const maxAttempts = 3;
+      const maxAttempts = 4;
 
       function tryLoad() {
         attempts++;
@@ -650,7 +650,7 @@
             audioAvailable = true;
             updateAudioUI();
           }
-        }, 25000);
+        }, 40000);
 
         testAudio.addEventListener('loadedmetadata', () => {
           clearTimeout(timeout);
