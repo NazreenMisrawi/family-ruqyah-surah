@@ -484,9 +484,9 @@
 
   <script>
     const AUDIO_TRACKS = [
-      { id: 1, title: "Ruqyah Ain", filename: "Ruqyah Ain.mpeg", path: "public/audio/Ruqyah Ain.mpeg", description: "Plays first" },
-      { id: 2, title: "Ruqyah Jin", filename: "Ruqyah Jin.mpeg", path: "public/audio/Ruqyah Jin.mpeg", description: "Automatically follows Ruqyah Ain" },
-      { id: 3, title: "Surah Al-Baqarah", filename: "Surah Al-Baqarah.mpeg", path: "public/audio/Surah Al-Baqarah.mpeg", description: "Repeats until sequence is restarted" }
+      { id: 1, title: "Ruqyah Ain", filename: "Ruqyah Ain.mpeg", path: "public/audio/Ruqyah%20Ain.mpeg", description: "Plays first" },
+      { id: 2, title: "Ruqyah Jin", filename: "Ruqyah Jin.mpeg", path: "public/audio/Ruqyah%20Jin.mpeg", description: "Automatically follows Ruqyah Ain" },
+      { id: 3, title: "Surah Al-Baqarah", filename: "Surah Al-Baqarah.mpeg", path: "public/audio/Surah%20Al-Baqarah.mpeg", description: "Repeats until sequence is restarted" }
     ];
 
     const RECITATIONS = [
@@ -547,7 +547,7 @@
 
     function initAudio() {
       const testAudio = new Audio();
-      testAudio.src = AUDIO_TRACKS[0].path;
+      testAudio.src = encodeURI(AUDIO_TRACKS[0].path);
       testAudio.addEventListener('error', () => { audioAvailable = false; updateAudioUI(); });
       testAudio.addEventListener('loadedmetadata', () => { audioAvailable = true; updateAudioUI(); });
       updateAudioUI();
@@ -591,7 +591,7 @@
       currentTrackIndex = index;
       const track = AUDIO_TRACKS[index];
       if (audioElement) { audioElement.pause(); audioElement.src = ''; }
-      audioElement = new Audio(track.path);
+      audioElement = new Audio(encodeURI(track.path));
       audioElement.preload = 'metadata';
       document.getElementById('currentTitle').textContent = track.title;
       document.getElementById('currentDesc').textContent = track.description;
