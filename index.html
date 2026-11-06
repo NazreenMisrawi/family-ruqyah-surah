@@ -380,6 +380,25 @@
     }
 
     
+    
+    .reset-btn {
+      display: block;
+      margin: 0.75rem auto 0;
+      padding: 0.4rem 1rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .reset-btn:hover {
+      background: #f5f0e6;
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
     /* Lightbox */
     .lightbox {
       display: none;
@@ -725,6 +744,16 @@
       localStorage.setItem(DATE_KEY, getToday());
     }
 
+    
+    function resetRecitation(recId) {
+      const data = loadCounters();
+      const rec = RECITATIONS.find(r => r.id === recId);
+      if (!rec) return;
+      rec.counters.forEach(c => { data[c.key] = 0; });
+      saveCounters(data);
+      renderRecitations();
+    }
+
     function updateCounter(key, delta, max) {
       const data = loadCounters();
       let val = (data[key] || 0) + delta;
@@ -771,6 +800,7 @@
             <div class="counters">
               <div class="counter-group">${counterBlocks}</div>
               ${rec.caption ? `<div class="caption">${rec.caption}</div>` : ''}
+              <button class="reset-btn" onclick="resetRecitation(${rec.id})">Reset</button>
             </div>
           </article>`;
       }).join('');
@@ -811,6 +841,7 @@
       document.getElementById('lightbox').classList.remove('active');
     }
     window.closeLightbox = closeLightbox;
+    window.resetRecitation = resetRecitation;
 
     // Attach image clicks after render
     function attachImageClicks() {
