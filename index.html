@@ -122,7 +122,7 @@
       opacity: 0.82;
       margin-bottom: 1.1rem;
     }
-    .progress-container { margin-bottom: 0.45rem; }
+    .progress-container { margin-bottom: 0.35rem; }
     .progress-bar {
       width: 100%;
       height: 8px;
@@ -157,6 +157,7 @@
       font-size: 0.78rem;
       opacity: 0.75;
       font-variant-numeric: tabular-nums;
+      margin-top: 0.25rem;
     }
     .controls {
       display: flex;
@@ -378,6 +379,38 @@
       font-style: italic;
     }
 
+    
+    /* Lightbox */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .lightbox.active { display: flex; }
+    .lightbox-img {
+      max-width: 92vw;
+      max-height: 92vh;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+    }
+    .lightbox-close {
+      position: absolute;
+      top: 1rem;
+      right: 1.5rem;
+      color: white;
+      font-size: 2.5rem;
+      cursor: pointer;
+      line-height: 1;
+      user-select: none;
+    }
+    .card-image { cursor: pointer; }
+
     /* Responsive */
     @media (max-width: 1100px) {
       .recitations-grid { grid-template-columns: repeat(2, 1fr); }
@@ -414,7 +447,7 @@
 
       <div class="playback-panel">
         <div class="now-playing-label">NOW PLAYING</div>
-        <div class="track-title" id="currentTitle">Audio 1</div>
+        <div class="track-title" id="currentTitle">Ruqyah Ain</div>
         <div class="track-description" id="currentDesc">Plays first</div>
         <div class="progress-container">
           <div class="progress-bar" id="progressBar">
@@ -426,7 +459,9 @@
           </div>
         </div>
         <div class="controls">
+          <button class="btn" id="prevBtn" disabled>Previous</button>
           <button class="btn btn-primary" id="playBtn" disabled>Play</button>
+          <button class="btn" id="nextBtn" disabled>Next</button>
           <button class="btn" id="restartBtn" disabled>Restart Sequence</button>
         </div>
         <div class="audio-status" id="audioStatus">
@@ -449,9 +484,9 @@
 
   <script>
     const AUDIO_TRACKS = [
-      { id: 1, title: "Audio 1", filename: "Ruqyah Ain.mpeg", path: "public/audio/Ruqyah Ain.mpeg", description: "Plays first" },
-      { id: 2, title: "Audio 2", filename: "Ruqyah Jin.mpeg", path: "public/audio/Ruqyah Jin.mpeg", description: "Automatically follows Audio 1" },
-      { id: 3, title: "Audio 3", filename: "Surah Al-Baqarah.mpeg", path: "public/audio/Surah Al-Baqarah.mpeg", description: "Repeats until sequence is restarted" }
+      { id: 1, title: "Ruqyah Ain", filename: "Ruqyah Ain.mpeg", path: "public/audio/Ruqyah Ain.mpeg", description: "Plays first" },
+      { id: 2, title: "Ruqyah Jin", filename: "Ruqyah Jin.mpeg", path: "public/audio/Ruqyah Jin.mpeg", description: "Automatically follows Ruqyah Ain" },
+      { id: 3, title: "Surah Al-Baqarah", filename: "Surah Al-Baqarah.mpeg", path: "public/audio/Surah Al-Baqarah.mpeg", description: "Repeats until sequence is restarted" }
     ];
 
     const RECITATIONS = [
@@ -524,10 +559,14 @@
       const playBtn = document.getElementById('playBtn');
       const restartBtn = document.getElementById('restartBtn');
       const totalTime = document.getElementById('totalTime');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
       if (!audioAvailable) {
         statusEl.style.display = 'block';
         playBtn.disabled = true;
         restartBtn.disabled = true;
+        prevBtn.disabled = true;
+        nextBtn.disabled = true;
         totalTime.textContent = '--:-- total';
         document.getElementById('currentTitle').textContent = AUDIO_TRACKS[0].title;
         document.getElementById('currentDesc').textContent = AUDIO_TRACKS[0].description;
@@ -535,6 +574,8 @@
         statusEl.style.display = 'none';
         playBtn.disabled = false;
         restartBtn.disabled = false;
+        prevBtn.disabled = false;
+        nextBtn.disabled = false;
       }
     }
 
@@ -622,12 +663,21 @@
     function renderOrderList() {
       const container = document.getElementById('orderList');
       container.innerHTML = AUDIO_TRACKS.map((track, idx) => {
-        const isCurrent = idx === currentTrackIndex && audioAvailable && isPlaying;
-        let statusClass = 'status-done';
-        let statusText = 'DONE';
-        if (idx === 1) { statusClass = 'status-next'; statusText = 'NEXT'; }
-        if (idx === 2) { statusClass = 'status-repeat'; statusText = 'REPEAT'; }
-        if (isCurrent) { statusClass = 'status-current'; statusText = 'CURRENT'; }
+        const isCurrent = idx === currentTrackIndex && audioAvailable;
+        let statusClass = 'status-next';
+        let statusText = 'NEXT';
+
+        if (isCurrent) {
+          statusClass = 'status-current';
+          statusText = 'Currently Playing';
+        } else if (idx < currentTrackIndex) {
+          statusClass = 'status-done';
+          statusText = 'Done';
+        } else if (idx === 2) {
+          statusClass = 'status-repeat';
+          statusText = 'REPEAT';
+        }
+
         return `
           <div class="order-row ${isCurrent ? 'current' : ''}">
             <div class="order-number">${String(idx + 1).padStart(2, '0')}</div>
@@ -638,6 +688,7 @@
             <div class="order-status ${statusClass}">${statusText}</div>
           </div>`;
       }).join('');
+      if (window.attachImageClicks) window.attachImageClicks();
     }
 
     function getToday() {
@@ -713,20 +764,72 @@
             </div>
           </article>`;
       }).join('');
+      if (window.attachImageClicks) window.attachImageClicks();
     }
 
     document.getElementById('playBtn').addEventListener('click', togglePlay);
     document.getElementById('restartBtn').addEventListener('click', restartSequence);
+    document.getElementById('prevBtn').addEventListener('click', playPrevious);
+    document.getElementById('nextBtn').addEventListener('click', playNext);
     document.getElementById('progressBar').addEventListener('click', seek);
+
+    function playPrevious() {
+      if (!audioAvailable) return;
+      const newIndex = Math.max(0, currentTrackIndex - 1);
+      if (newIndex !== currentTrackIndex || !audioElement) {
+        loadTrack(newIndex, isPlaying);
+      }
+    }
+
+    function playNext() {
+      if (!audioAvailable) return;
+      const newIndex = Math.min(AUDIO_TRACKS.length - 1, currentTrackIndex + 1);
+      if (newIndex !== currentTrackIndex || !audioElement) {
+        loadTrack(newIndex, isPlaying);
+      }
+    }
+
+    // Lightbox
+    function openLightbox(src, alt) {
+      const lb = document.getElementById('lightbox');
+      const img = document.getElementById('lightboxImg');
+      img.src = src;
+      img.alt = alt || '';
+      lb.classList.add('active');
+    }
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('active');
+    }
+    window.closeLightbox = closeLightbox;
+
+    // Attach image clicks after render
+    function attachImageClicks() {
+      document.querySelectorAll('.card-image').forEach(img => {
+        img.onclick = (e) => {
+          e.stopPropagation();
+          openLightbox(img.src, img.alt);
+        };
+      });
+    }
+    // Call after initial render and expose for re-attach
+    window.attachImageClicks = attachImageClicks;
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') renderRecitations();
     });
 
     initAudio();
     renderRecitations();
+    if (window.attachImageClicks) window.attachImageClicks();
     setInterval(() => {
       if (localStorage.getItem(DATE_KEY) !== getToday()) renderRecitations();
     }, 60000);
   </script>
+
+  <!-- Image lightbox -->
+  <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+    <span class="lightbox-close">&times;</span>
+    <img id="lightboxImg" class="lightbox-img" alt="Full view">
+  </div>
+
 </body>
 </html>
