@@ -811,7 +811,7 @@
         }).join('');
         return `
           <article class="recitation-card">
-            <div class="card-top" onclick="toggleCard(this)">
+            <div class="card-top" onclick="toggleCard(this, event)">
               <img src="${rec.image}" alt="${rec.title}" class="card-image" loading="lazy">
               <div class="card-heading">
                 <div class="recitation-number">${rec.number}</div>
@@ -876,12 +876,25 @@
     window.closeLightbox = closeLightbox;
     window.resetRecitation = resetRecitation;
 
-    function toggleCard(header) {
+    function toggleCard(header, event) {
       if (window.innerWidth > 768) return;
+      if (event) event.stopPropagation();
       const card = header.closest('.recitation-card');
-      card.classList.toggle('expanded');
-      const btn = header.querySelector('.card-toggle');
-      if (btn) btn.textContent = card.classList.contains('expanded') ? '▲' : '▼';
+      const isExpanded = card.classList.contains('expanded');
+
+      // Close all cards first
+      document.querySelectorAll('.recitation-card').forEach(c => {
+        c.classList.remove('expanded');
+        const b = c.querySelector('.card-toggle');
+        if (b) b.textContent = '▼';
+      });
+
+      // If it wasn't expanded, open it
+      if (!isExpanded) {
+        card.classList.add('expanded');
+        const btn = card.querySelector('.card-toggle');
+        if (btn) btn.textContent = '▲';
+      }
     }
     window.toggleCard = toggleCard;
 
