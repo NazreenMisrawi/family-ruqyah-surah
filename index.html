@@ -555,13 +555,13 @@
   </main>
 
   <footer class="version-footer">
-    Version <span id="appVersion">1.2.2</span><br>
+    Version <span id="appVersion">1.2.3</span><br>
     © 2026 Nazreen Misrawi
   </footer>
 
 
   <script>
-    const APP_VERSION = "1.2.2";
+    const APP_VERSION = "1.2.3";
 
     const AUDIO_TRACKS = [
       { id: 1, title: "Ruqyah Ain", filename: "Ruqyah Ain.mpeg", path: "public/audio/Ruqyah Ain.mpeg", description: "Plays first" },
@@ -631,22 +631,26 @@
       statusEl.style.display = 'block';
 
       let attempts = 0;
-      const maxAttempts = 2;
+      const maxAttempts = 3;
 
       function tryLoad() {
         attempts++;
         const testAudio = new Audio();
         testAudio.preload = 'metadata';
+        // Only wait for metadata so playback can start while the rest streams
         testAudio.src = encodeURI(AUDIO_TRACKS[0].path);
 
         const timeout = setTimeout(() => {
           if (!audioAvailable && attempts < maxAttempts) {
-            statusEl.textContent = 'Still loading… retrying';
+            statusEl.textContent = 'Still loading audio… (attempt ' + attempts + ')';
             tryLoad();
           } else if (!audioAvailable) {
-            statusEl.textContent = 'Audio is taking longer than usual. Check your connection and refresh.';
+            statusEl.textContent = 'Audio is loading slowly. You can still try pressing Play.';
+            // Allow the user to attempt playback anyway
+            audioAvailable = true;
+            updateAudioUI();
           }
-        }, 12000);
+        }, 25000);
 
         testAudio.addEventListener('loadedmetadata', () => {
           clearTimeout(timeout);
@@ -657,9 +661,11 @@
         testAudio.addEventListener('error', () => {
           clearTimeout(timeout);
           if (attempts < maxAttempts) {
-            setTimeout(tryLoad, 1500);
+            statusEl.textContent = 'Retrying audio load…';
+            setTimeout(tryLoad, 2000);
           } else if (!audioAvailable) {
-            statusEl.textContent = 'Could not load audio. Check your connection and refresh.';
+            statusEl.textContent = 'Having trouble loading audio. Press Play to try anyway.';
+            audioAvailable = true;
             updateAudioUI();
           }
         });
