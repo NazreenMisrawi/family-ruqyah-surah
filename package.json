@@ -1,0 +1,13 @@
+{
+  "name": "daily-ruqyah-surah",
+  "version": "1.0.0",
+  "description": "Daily Ruqyah and Surah – family listening & daily recitation",
+  "private": true,
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx serve ."
+  },
+  "keywords": ["ruqyah", "quran", "recitation", "family"],
+  "author": "",
+  "license": "UNLICENSED"
+}

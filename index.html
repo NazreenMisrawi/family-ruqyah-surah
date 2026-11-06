@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Ruqyah and Surah</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F6F1E8;
+      --primary: #1B4D3E;
+      --primary-dark: #14382D;
+      --sage: #9AAB9E;
+      --card: #FFFEFB;
+      --gold: #D4AF6A;
+      --gold-light: #E8D5A8;
+      --text: #1A3C32;
+      --text-secondary: #6B7B70;
+      --border: #EAE5DC;
+      --light-green: #E8F3EE;
+      --done: #C8E6C9;
+      --next: #E8F5E9;
+      --repeat: #F5EDE0;
+      --shadow: 0 4px 20px rgba(27, 77, 62, 0.08);
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      min-height: 100vh;
+    }
+
+    /* Header – rounded bar matching concept */
+    .header-wrap {
+      padding: 1.25rem 1.5rem 0;
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+    .header {
+      background: var(--primary);
+      color: white;
+      border-radius: 16px;
+      padding: 1.1rem 1.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      box-shadow: 0 4px 16px rgba(27, 77, 62, 0.18);
+    }
+    .header-icon {
+      font-size: 1.85rem;
+      line-height: 1;
+      opacity: 0.95;
+    }
+    .header-text h1 {
+      font-size: 1.28rem;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      margin: 0;
+    }
+    .header-text p {
+      font-size: 0.82rem;
+      opacity: 0.82;
+      margin: 0.12rem 0 0;
+      font-weight: 400;
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 1.25rem 1.5rem 3rem;
+    }
+
+    .section-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      padding: 1.6rem 1.5rem 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .section-card h2 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.15rem;
+    }
+    .section-subtitle {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: 1.35rem;
+    }
+
+    /* Playback panel */
+    .playback-panel {
+      background: var(--primary);
+      color: white;
+      border-radius: 14px;
+      padding: 1.35rem 1.5rem 1.25rem;
+      margin-bottom: 1.4rem;
+    }
+    .now-playing-label {
+      font-size: 0.7rem;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+      opacity: 0.7;
+      margin-bottom: 0.35rem;
+    }
+    .track-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 0.2rem;
+    }
+    .track-description {
+      font-size: 0.88rem;
+      opacity: 0.82;
+      margin-bottom: 1.1rem;
+    }
+    .progress-container { margin-bottom: 0.45rem; }
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(255,255,255,0.22);
+      border-radius: 4px;
+      cursor: pointer;
+      position: relative;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--gold);
+      width: 0%;
+      border-radius: 4px;
+      position: relative;
+    }
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      right: -7px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      background: white;
+      border: 2px solid var(--gold);
+      border-radius: 50%;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+    .time-display {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      opacity: 0.75;
+      font-variant-numeric: tabular-nums;
+    }
+    .controls {
+      display: flex;
+      gap: 0.65rem;
+      margin-top: 1rem;
+    }
+    .btn {
+      background: rgba(255,255,255,0.14);
+      color: white;
+      border: none;
+      padding: 0.55rem 1.15rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.88rem;
+    }
+    .btn:hover:not(:disabled) { background: rgba(255,255,255,0.24); }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-primary { background: var(--gold); color: var(--primary-dark); }
+    .btn-primary:hover:not(:disabled) { background: #e0bc78; }
+    .audio-status {
+      background: rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 0.65rem 1rem;
+      font-size: 0.85rem;
+      margin-top: 0.75rem;
+      text-align: center;
+    }
+
+    /* Playback Order */
+    .playback-order h3 {
+      font-size: 0.72rem;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 0.65rem;
+      font-weight: 600;
+    }
+    .order-list { display: flex; flex-direction: column; gap: 0.4rem; }
+    .order-row {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.55rem 0.9rem;
+      background: #FAF8F4;
+      border-radius: 10px;
+      border: 1px solid transparent;
+    }
+    .order-row.current {
+      background: #F0F7F3;
+      border-color: #C5D9CE;
+    }
+    .order-number {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 0.82rem;
+      min-width: 1.8rem;
+      background: white;
+      border-radius: 6px;
+      padding: 0.15rem 0.35rem;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+    .order-info { flex: 1; }
+    .order-title { font-weight: 600; font-size: 0.9rem; }
+    .order-desc { font-size: 0.75rem; color: var(--text-secondary); }
+    .order-status {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      padding: 0.28rem 0.7rem;
+      border-radius: 20px;
+      text-transform: uppercase;
+    }
+    .status-done { background: var(--done); color: #2E7D32; }
+    .status-next { background: var(--next); color: #388E3C; }
+    .status-repeat { background: var(--repeat); color: #8D6E4A; }
+    .status-current { background: var(--primary); color: white; }
+
+    /* Recitation cards */
+    .recitations-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.1rem;
+    }
+    .recitation-card {
+      background: #FFFEFB;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1rem 1rem 1.1rem;
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+    }
+    .card-top {
+      display: flex;
+      gap: 0.85rem;
+      align-items: flex-start;
+      margin-bottom: 0.9rem;
+    }
+    .card-image {
+      width: 92px;
+      height: 110px;
+      object-fit: cover;
+      object-position: center top;
+      border-radius: 8px;
+      flex-shrink: 0;
+      background: #f0ebe3;
+      border: 1px solid var(--border);
+    }
+    .card-heading { flex: 1; }
+    .recitation-number {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
+    }
+    .recitation-title {
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: var(--primary);
+      line-height: 1.3;
+    }
+    .section-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.9px;
+      text-transform: uppercase;
+      color: var(--sage);
+      margin: 0.75rem 0 0.25rem;
+    }
+    .arabic {
+      font-family: 'Noto Naskh Arabic', 'Traditional Arabic', serif;
+      font-size: 1.18rem;
+      line-height: 1.85;
+      direction: rtl;
+      text-align: right;
+      color: var(--text);
+    }
+    .romanized {
+      font-size: 0.82rem;
+      color: var(--text);
+      line-height: 1.45;
+    }
+    .translation {
+      font-size: 0.82rem;
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .schedule {
+      margin-top: 0.9rem;
+      padding: 0.5rem 0.7rem;
+      background: var(--light-green);
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--primary);
+      text-align: center;
+    }
+    .counters {
+      margin-top: 0.85rem;
+      padding-top: 0.7rem;
+      border-top: 1px solid var(--border);
+    }
+    .counter-group {
+      display: flex;
+      gap: 0.75rem;
+    }
+    .counter-block {
+      flex: 1;
+      text-align: center;
+    }
+    .counter-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 0.25rem;
+    }
+    .counter-value {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--primary);
+      margin-bottom: 0.4rem;
+    }
+    .counter-controls {
+      display: flex;
+      justify-content: center;
+      gap: 0.4rem;
+    }
+    .counter-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: white;
+      color: var(--primary);
+      font-size: 1.15rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .counter-btn:hover:not(:disabled) {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    .counter-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .caption {
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      text-align: center;
+      margin-top: 0.45rem;
+      font-style: italic;
+    }
+
+    /* Responsive */
+    @media (max-width: 1100px) {
+      .recitations-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .header-wrap, .container { padding-left: 1rem; padding-right: 1rem; }
+      .header { border-radius: 12px; padding: 0.9rem 1.2rem; }
+      .header-text h1 { font-size: 1.05rem; }
+      .recitations-grid { grid-template-columns: 1fr; }
+      .card-image { width: 80px; height: 96px; }
+      .section-card { padding: 1.25rem 1rem; }
+    }
+    @media (max-width: 480px) {
+      .controls { flex-wrap: wrap; }
+      .btn { flex: 1; min-width: 120px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header-wrap">
+    <header class="header">
+      <div class="header-icon">☾</div>
+      <div class="header-text">
+        <h1>DAILY RUQYAH AND SURAH</h1>
+        <p>Family listening & daily recitation</p>
+      </div>
+    </header>
+  </div>
+
+  <main class="container">
+    <section class="section-card">
+      <h2>Audio Player</h2>
+      <p class="section-subtitle">Your daily listening sequence</p>
+
+      <div class="playback-panel">
+        <div class="now-playing-label">NOW PLAYING</div>
+        <div class="track-title" id="currentTitle">Audio 1</div>
+        <div class="track-description" id="currentDesc">Plays first</div>
+        <div class="progress-container">
+          <div class="progress-bar" id="progressBar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <div class="time-display">
+            <span id="elapsedTime">0:00 elapsed</span>
+            <span id="totalTime">--:-- total</span>
+          </div>
+        </div>
+        <div class="controls">
+          <button class="btn btn-primary" id="playBtn" disabled>Play</button>
+          <button class="btn" id="restartBtn" disabled>Restart Sequence</button>
+        </div>
+        <div class="audio-status" id="audioStatus">
+          Audio files are not yet configured. Playback will be available once the audio files are added.
+        </div>
+      </div>
+
+      <div class="playback-order">
+        <h3>PLAYBACK ORDER</h3>
+        <div class="order-list" id="orderList"></div>
+      </div>
+    </section>
+
+    <section class="section-card">
+      <h2>Daily recitations</h2>
+      <p class="section-subtitle">Arabic · Romanized pronunciation · Bahasa Melayu · English</p>
+      <div class="recitations-grid" id="recitationsGrid"></div>
+    </section>
+  </main>
+
+  <script>
+    const AUDIO_TRACKS = [
+      { id: 1, title: "Audio 1", filename: "Ruqyah Ain.mpeg", path: "public/audio/Ruqyah Ain.mpeg", description: "Plays first" },
+      { id: 2, title: "Audio 2", filename: "Ruqyah Jin.mpeg", path: "public/audio/Ruqyah Jin.mpeg", description: "Automatically follows Audio 1" },
+      { id: 3, title: "Audio 3", filename: "Surah Al-Baqarah.mpeg", path: "public/audio/Surah Al-Baqarah.mpeg", description: "Repeats until sequence is restarted" }
+    ];
+
+    const RECITATIONS = [
+      {
+        id: 1,
+        image: "public/images/Du'a For Full Protection.jpeg",
+        number: "RECITATION 1",
+        title: "Dua for Full Protection",
+        arabic: "بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ",
+        romanized: "Bismillahil-ladhi la yadurru ma'as-mihi shai'un fil-ardi wa la fis-sama'i, wa Huwas-Sami'ul-'Alim.",
+        malay: "Dengan nama Allah, yang dengan nama-Nya tidak ada sesuatu pun yang mendatangkan mudarat di bumi dan di langit, dan Dia Maha Mendengar lagi Maha Mengetahui.",
+        english: "In the name of Allah, with whose name nothing on earth or in heaven can cause harm. He is the All-Hearing, the All-Knowing.",
+        schedule: "3x setiap pagi · 3x setiap petang",
+        counters: [
+          { key: "r1_subuh", label: "SUBUH", max: 3 },
+          { key: "r1_asar", label: "ASAR", max: 3 }
+        ]
+      },
+      {
+        id: 2,
+        image: "public/images/Protection Against Evil Eye.jpeg",
+        number: "RECITATION 2",
+        title: "Protection Against the Evil Eye",
+        arabic: "أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّةِ مِنْ كُلِّ شَيْطَانٍ وَهَامَّةٍ وَمِنْ كُلِّ عَيْنٍ لَامَّةٍ",
+        romanized: "A'udhu bi kalimatillahit-tammati, min kulli shaitanin wa hammatin wa min kulli 'aynin lammah.",
+        malay: "Aku berlindung dengan kalimah-kalimah Allah yang sempurna daripada setiap syaitan, makhluk berbisa dan setiap pandangan mata yang membawa keburukan.",
+        english: "I seek refuge in the Perfect Words of Allah from every devil, every harmful creature, and every evil eye.",
+        schedule: "3x selepas Subuh · 3x selepas Asar",
+        counters: [
+          { key: "r2_subuh", label: "SUBUH", max: 3 },
+          { key: "r2_asar", label: "ASAR", max: 3 }
+        ]
+      },
+      {
+        id: 3,
+        image: "public/images/Daily_Dhikr.jpeg",
+        number: "RECITATION 3",
+        title: "La ilaha illallah · Daily Dhikr",
+        arabic: "لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ",
+        romanized: "La ilaha illallahu wahdahu la sharika lah, lahul-mulku wa lahul-hamdu wa huwa 'ala kulli shai'in qadir.",
+        malay: "Tiada Tuhan yang berhak disembah melainkan Allah semata-mata. Tiada sekutu bagi-Nya. Milik-Nya segala kerajaan dan segala pujian, dan Dia Maha Berkuasa atas segala sesuatu.",
+        english: "There is no deity worthy of worship except Allah alone, without partner. To Him belongs all sovereignty and praise, and He has power over all things.",
+        schedule: "100x sepanjang hari",
+        counters: [
+          { key: "r3_daily", label: "DAILY COUNT", max: 100 }
+        ],
+        caption: "Counter accumulates throughout the day."
+      }
+    ];
+
+    let currentTrackIndex = 0;
+    let isPlaying = false;
+    let audioElement = null;
+    let audioAvailable = false;
+
+    const STORAGE_KEY = "dailyRuqyahCounters";
+    const DATE_KEY = "dailyRuqyahDate";
+
+    function initAudio() {
+      const testAudio = new Audio();
+      testAudio.src = AUDIO_TRACKS[0].path;
+      testAudio.addEventListener('error', () => { audioAvailable = false; updateAudioUI(); });
+      testAudio.addEventListener('loadedmetadata', () => { audioAvailable = true; updateAudioUI(); });
+      updateAudioUI();
+      renderOrderList();
+    }
+
+    function updateAudioUI() {
+      const statusEl = document.getElementById('audioStatus');
+      const playBtn = document.getElementById('playBtn');
+      const restartBtn = document.getElementById('restartBtn');
+      const totalTime = document.getElementById('totalTime');
+      if (!audioAvailable) {
+        statusEl.style.display = 'block';
+        playBtn.disabled = true;
+        restartBtn.disabled = true;
+        totalTime.textContent = '--:-- total';
+        document.getElementById('currentTitle').textContent = AUDIO_TRACKS[0].title;
+        document.getElementById('currentDesc').textContent = AUDIO_TRACKS[0].description;
+      } else {
+        statusEl.style.display = 'none';
+        playBtn.disabled = false;
+        restartBtn.disabled = false;
+      }
+    }
+
+    function formatTime(seconds) {
+      if (!isFinite(seconds) || seconds < 0) return '0:00';
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    function loadTrack(index, autoplay = false) {
+      if (!audioAvailable) return;
+      currentTrackIndex = index;
+      const track = AUDIO_TRACKS[index];
+      if (audioElement) { audioElement.pause(); audioElement.src = ''; }
+      audioElement = new Audio(track.path);
+      audioElement.preload = 'metadata';
+      document.getElementById('currentTitle').textContent = track.title;
+      document.getElementById('currentDesc').textContent = track.description;
+      audioElement.addEventListener('loadedmetadata', () => {
+        document.getElementById('totalTime').textContent = formatTime(audioElement.duration) + ' total';
+        updateProgress();
+      });
+      audioElement.addEventListener('timeupdate', updateProgress);
+      audioElement.addEventListener('ended', onTrackEnded);
+      audioElement.addEventListener('error', () => { audioAvailable = false; updateAudioUI(); });
+      if (autoplay) {
+        audioElement.play().then(() => {
+          isPlaying = true;
+          document.getElementById('playBtn').textContent = 'Pause';
+        }).catch(() => { isPlaying = false; });
+      }
+      renderOrderList();
+    }
+
+    function updateProgress() {
+      if (!audioElement || !audioElement.duration) return;
+      const percent = (audioElement.currentTime / audioElement.duration) * 100;
+      document.getElementById('progressFill').style.width = percent + '%';
+      document.getElementById('elapsedTime').textContent = formatTime(audioElement.currentTime) + ' elapsed';
+    }
+
+    function onTrackEnded() {
+      if (currentTrackIndex < 2) {
+        loadTrack(currentTrackIndex + 1, true);
+      } else {
+        audioElement.currentTime = 0;
+        audioElement.play();
+      }
+    }
+
+    function togglePlay() {
+      if (!audioAvailable) return;
+      if (!audioElement) { loadTrack(0, true); return; }
+      if (isPlaying) {
+        audioElement.pause();
+        isPlaying = false;
+        document.getElementById('playBtn').textContent = 'Play';
+      } else {
+        audioElement.play().then(() => {
+          isPlaying = true;
+          document.getElementById('playBtn').textContent = 'Pause';
+        }).catch(() => {});
+      }
+    }
+
+    function restartSequence() {
+      if (!audioAvailable) return;
+      if (audioElement) audioElement.pause();
+      isPlaying = false;
+      document.getElementById('playBtn').textContent = 'Play';
+      loadTrack(0, false);
+      document.getElementById('progressFill').style.width = '0%';
+      document.getElementById('elapsedTime').textContent = '0:00 elapsed';
+    }
+
+    function seek(e) {
+      if (!audioElement || !audioElement.duration) return;
+      const bar = document.getElementById('progressBar');
+      const rect = bar.getBoundingClientRect();
+      const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      audioElement.currentTime = percent * audioElement.duration;
+    }
+
+    function renderOrderList() {
+      const container = document.getElementById('orderList');
+      container.innerHTML = AUDIO_TRACKS.map((track, idx) => {
+        const isCurrent = idx === currentTrackIndex && audioAvailable && isPlaying;
+        let statusClass = 'status-done';
+        let statusText = 'DONE';
+        if (idx === 1) { statusClass = 'status-next'; statusText = 'NEXT'; }
+        if (idx === 2) { statusClass = 'status-repeat'; statusText = 'REPEAT'; }
+        if (isCurrent) { statusClass = 'status-current'; statusText = 'CURRENT'; }
+        return `
+          <div class="order-row ${isCurrent ? 'current' : ''}">
+            <div class="order-number">${String(idx + 1).padStart(2, '0')}</div>
+            <div class="order-info">
+              <div class="order-title">${track.title}</div>
+              <div class="order-desc">${track.description}</div>
+            </div>
+            <div class="order-status ${statusClass}">${statusText}</div>
+          </div>`;
+      }).join('');
+    }
+
+    function getToday() {
+      const d = new Date();
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    }
+
+    function loadCounters() {
+      const today = getToday();
+      const storedDate = localStorage.getItem(DATE_KEY);
+      if (storedDate !== today) {
+        const reset = {};
+        RECITATIONS.forEach(r => r.counters.forEach(c => { reset[c.key] = 0; }));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(reset));
+        localStorage.setItem(DATE_KEY, today);
+        return reset;
+      }
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+      catch { return {}; }
+    }
+
+    function saveCounters(data) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      localStorage.setItem(DATE_KEY, getToday());
+    }
+
+    function updateCounter(key, delta, max) {
+      const data = loadCounters();
+      let val = (data[key] || 0) + delta;
+      val = Math.max(0, Math.min(max, val));
+      data[key] = val;
+      saveCounters(data);
+      renderRecitations();
+    }
+
+    function renderRecitations() {
+      const grid = document.getElementById('recitationsGrid');
+      const counters = loadCounters();
+      grid.innerHTML = RECITATIONS.map(rec => {
+        const counterBlocks = rec.counters.map(c => {
+          const val = counters[c.key] || 0;
+          return `
+            <div class="counter-block">
+              <div class="counter-label">${c.label}</div>
+              <div class="counter-value">${val} / ${c.max}</div>
+              <div class="counter-controls">
+                <button class="counter-btn" onclick="updateCounter('${c.key}', -1, ${c.max})" ${val <= 0 ? 'disabled' : ''}>−</button>
+                <button class="counter-btn" onclick="updateCounter('${c.key}', 1, ${c.max})" ${val >= c.max ? 'disabled' : ''}>+</button>
+              </div>
+            </div>`;
+        }).join('');
+        return `
+          <article class="recitation-card">
+            <div class="card-top">
+              <img src="${rec.image}" alt="${rec.title}" class="card-image" loading="lazy">
+              <div class="card-heading">
+                <div class="recitation-number">${rec.number}</div>
+                <h3 class="recitation-title">${rec.title}</h3>
+              </div>
+            </div>
+            <div class="section-label">Arabic</div>
+            <div class="arabic">${rec.arabic}</div>
+            <div class="section-label">Romanized</div>
+            <div class="romanized">${rec.romanized}</div>
+            <div class="section-label">Bahasa Melayu</div>
+            <div class="translation">${rec.malay}</div>
+            <div class="section-label">English</div>
+            <div class="translation">${rec.english}</div>
+            <div class="schedule">${rec.schedule}</div>
+            <div class="counters">
+              <div class="counter-group">${counterBlocks}</div>
+              ${rec.caption ? `<div class="caption">${rec.caption}</div>` : ''}
+            </div>
+          </article>`;
+      }).join('');
+    }
+
+    document.getElementById('playBtn').addEventListener('click', togglePlay);
+    document.getElementById('restartBtn').addEventListener('click', restartSequence);
+    document.getElementById('progressBar').addEventListener('click', seek);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') renderRecitations();
+    });
+
+    initAudio();
+    renderRecitations();
+    setInterval(() => {
+      if (localStorage.getItem(DATE_KEY) !== getToday()) renderRecitations();
+    }, 60000);
+  </script>
+</body>
+</html>

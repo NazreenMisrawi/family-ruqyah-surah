@@ -1,0 +1,622 @@
+# GROK BUILD — DAILY RUQYAH AND SURAH
+## Complete Web Application Specification — Version 1.0
+
+Build a fully functional, mobile-responsive web application called **Daily Ruqyah and Surah**.
+
+The application is intended for family members to access daily Quranic audio and recitations independently on their own devices.
+
+IMPORTANT: Read this entire specification before beginning development.
+
+The uploaded design reference, recitation images and requirements below are the authoritative source for the application.
+
+Do not stop at generating a visual mock-up. Build the actual working web application.
+
+---
+
+# 1. UPLOADED ASSET MAPPING
+
+Use the following uploaded assets directly.
+
+Do not generate substitutes or use unrelated images.
+
+## Desktop design reference
+
+Filename:
+
+`family_ruqyah_surah_concept_v9.png`
+
+Purpose:
+- Primary visual reference for the desktop application.
+- Follow its colours, layout, spacing, typography, card design and overall appearance.
+- Reproduce the design as closely as possible.
+
+## Recitation reference images
+
+| Filename | Application usage |
+|---|---|
+| `Du'a For Full Protection.jpeg` | Recitation 1 — Dua for Full Protection |
+| `Protection Against Evil Eye.jpeg` | Recitation 2 — Protection Against the Evil Eye |
+| `Daily_Dhikr.jpeg` | Recitation 3 — Daily Dhikr (100 Times) |
+
+Use each image in its corresponding recitation card.
+
+Preserve the original images and their aspect ratios. Use suitable image containment or cropping so important content remains visible.
+
+## Audio files — To be integrated later
+
+The actual audio files cannot be uploaded to Grok Build at this stage.
+
+Prepare the application to use these exact filenames:
+
+| Playback order | Filename |
+|---|---|
+| Audio 1 | `Ruqyah Ain.mpeg` |
+| Audio 2 | `Ruqyah Jin.mpeg` |
+| Audio 3 | `Surah Al-Baqarah.mpeg` |
+
+Prepare the following relative paths for future GitHub integration:
+
+- `public/audio/Ruqyah Ain.mpeg`
+- `public/audio/Ruqyah Jin.mpeg`
+- `public/audio/Surah Al-Baqarah.mpeg`
+
+Do not use sample music or unrelated substitute audio.
+
+Centralise the audio file paths in a configuration module so they can be changed without modifying the player components.
+
+For this initial build, the player interface and playback logic must be implemented, but actual playback should gracefully report that the audio files are not yet installed.
+
+Do not display broken audio controls or misleading playback status.
+
+---
+
+# 2. VISUAL DESIGN AND THEME
+
+Use Desktop Concept V9 as the primary visual reference.
+
+The application should look like a polished family utility application.
+
+## Colour palette
+
+- Main background: warm ivory / off-white.
+- Primary colour: deep forest green.
+- Secondary colour: muted sage green.
+- Card background: soft white / warm cream.
+- Accent colour: muted gold.
+- Main text: dark forest green.
+- Secondary text: muted grey-green.
+
+## Design characteristics
+
+- Clean, minimal and organised.
+- Rounded rectangular panels.
+- Subtle borders and shadows.
+- Comfortable spacing between sections.
+- Clear typography and visual hierarchy.
+- Avoid unnecessary decorative elements.
+- Avoid excessive gradients and bright colours.
+
+## Header
+
+Create a full-width dark forest-green header.
+
+Display:
+- Crescent moon icon.
+- Application title: DAILY RUQYAH AND SURAH
+- Subtitle: Family listening & daily recitation
+
+Follow the horizontal arrangement and proportions shown in Desktop Concept V9.
+
+---
+
+# 3. AUDIO PLAYER
+
+Place the Audio Player inside a large white rounded container directly below the header.
+
+Section heading:
+
+**Audio Player**
+
+Subtitle:
+
+Your daily listening sequence
+
+Inside the container, create a prominent dark forest-green playback panel.
+
+Include:
+
+- NOW PLAYING label.
+- Current audio filename/title.
+- Short playback description.
+- Audio progress bar.
+- Elapsed time.
+- Total duration.
+
+Below the playback panel, display:
+
+**PLAYBACK ORDER**
+
+Show three compact horizontal rows:
+
+| Track | Description |
+|---|---|
+| 01 — Audio 1 | Plays first |
+| 02 — Audio 2 | Automatically follows Audio 1 |
+| 03 — Audio 3 | Repeats until sequence is restarted |
+
+The current track must be visually distinguishable.
+
+## Playback behaviour
+
+Implement the following sequence:
+
+1. Audio 1 plays first.
+2. Audio 2 starts automatically when Audio 1 finishes.
+3. Audio 3 starts automatically when Audio 2 finishes.
+4. Audio 3 loops indefinitely.
+5. Audio 3 continues looping until the user restarts the sequence.
+
+Playback should only begin after the user presses Play.
+
+Implement:
+
+- Play/Pause.
+- Seek/progress bar.
+- Elapsed time.
+- Total duration.
+- Current track display.
+- Restart sequence.
+
+The restart control must return playback to Audio 1.
+
+Ensure only one audio file plays at a time.
+
+Handle audio loading errors and playback interruptions gracefully.
+
+## Future audio integration
+
+Create a central audio configuration module containing:
+
+- Audio 1: `/audio/Ruqyah Ain.mpeg`
+- Audio 2: `/audio/Ruqyah Jin.mpeg`
+- Audio 3: `/audio/Surah Al-Baqarah.mpeg`
+
+When deployed, these files will reside under `public/audio/`.
+
+Use relative paths that work in the deployed application.
+
+The application must not require changes to the player logic when these files are added.
+
+If audio files are unavailable:
+- Show a clear, unobtrusive message that audio is not yet configured.
+- Disable playback controls that cannot function.
+- Keep the player layout intact.
+- Do not display fabricated durations or playback progress.
+
+---
+
+# 4. INDEPENDENT DEVICE PLAYBACK
+
+Family members may open the application on multiple devices.
+
+Each device must have its own independent audio player state.
+
+Do not implement:
+- Shared playback synchronisation.
+- Remote playback controls.
+- Central audio sessions.
+- Shared playback progress.
+
+Each device plays audio locally and independently.
+
+Counter values must also remain independent between devices.
+
+Do not introduce user accounts or cloud synchronisation in this version.
+
+---
+
+# 5. DAILY RECITATIONS SECTION
+
+Below the audio player, create a large white rounded container.
+
+Section heading:
+
+**Daily recitations**
+
+Subtitle:
+
+Arabic · Romanized pronunciation · Bahasa Melayu · English
+
+Display three recitation cards in a horizontal three-column layout on desktop.
+
+IMPORTANT:
+
+- All three cards must display their full contents by default.
+- Do not implement expandable or collapsible cards in this version.
+- Do not hide Arabic, pronunciation, translations or counters.
+- Do not create additional recitation cards.
+- Maintain consistent card structure and styling.
+- Use the uploaded reference images.
+
+Each card must contain:
+
+1. Reference image.
+2. Recitation number.
+3. Recitation heading.
+4. Arabic text.
+5. Romanized pronunciation.
+6. Bahasa Melayu translation.
+7. English translation.
+8. Reading schedule.
+9. Daily counters.
+
+Use suitable Arabic typography.
+
+Arabic must display right-to-left and remain readable on mobile devices.
+
+---
+
+# 6. RECITATION 1 — DUA FOR FULL PROTECTION
+
+Reference image:
+
+`Du'a For Full Protection.jpeg`
+
+Heading:
+
+**RECITATION 1**
+
+**Dua for Full Protection**
+
+Arabic:
+
+بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ
+
+Romanized pronunciation:
+
+Bismillahil-ladhi la yadurru ma'as-mihi shai'un fil-ardi wa la fis-sama'i, wa Huwas-Sami'ul-'Alim.
+
+Bahasa Melayu:
+
+Dengan nama Allah, yang dengan nama-Nya tidak ada sesuatu pun yang mendatangkan mudarat di bumi dan di langit, dan Dia Maha Mendengar lagi Maha Mengetahui.
+
+English:
+
+In the name of Allah, with whose name nothing on earth or in heaven can cause harm. He is the All-Hearing, the All-Knowing.
+
+Reading schedule:
+
+**3x setiap pagi · 3x setiap petang**
+
+Counters:
+
+- SUBUH: 0 / 3
+- ASAR: 0 / 3
+
+Provide independent minus and plus buttons for each counter.
+
+---
+
+# 7. RECITATION 2 — PROTECTION AGAINST THE EVIL EYE
+
+Reference image:
+
+`Protection Against Evil Eye.jpeg`
+
+Heading:
+
+**RECITATION 2**
+
+**Protection Against the Evil Eye**
+
+Arabic:
+
+أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّةِ مِنْ كُلِّ شَيْطَانٍ وَهَامَّةٍ وَمِنْ كُلِّ عَيْنٍ لَامَّةٍ
+
+Romanized pronunciation:
+
+A'udhu bi kalimatillahit-tammati, min kulli shaitanin wa hammatin wa min kulli 'aynin lammah.
+
+Bahasa Melayu:
+
+Aku berlindung dengan kalimah-kalimah Allah yang sempurna daripada setiap syaitan, makhluk berbisa dan setiap pandangan mata yang membawa keburukan.
+
+English:
+
+I seek refuge in the Perfect Words of Allah from every devil, every harmful creature, and every evil eye.
+
+Reading schedule:
+
+**3x selepas Subuh · 3x selepas Asar**
+
+Counters:
+
+- SUBUH: 0 / 3
+- ASAR: 0 / 3
+
+Provide independent minus and plus buttons for each counter.
+
+---
+
+# 8. RECITATION 3 — DAILY DHIKR
+
+Reference image:
+
+`Daily_Dhikr.jpeg`
+
+Heading:
+
+**RECITATION 3**
+
+**La ilaha illallah · Daily Dhikr**
+
+Arabic:
+
+لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ
+
+Romanized pronunciation:
+
+La ilaha illallahu wahdahu la sharika lah, lahul-mulku wa lahul-hamdu wa huwa 'ala kulli shai'in qadir.
+
+Bahasa Melayu:
+
+Tiada Tuhan yang berhak disembah melainkan Allah semata-mata. Tiada sekutu bagi-Nya. Milik-Nya segala kerajaan dan segala pujian, dan Dia Maha Berkuasa atas segala sesuatu.
+
+English:
+
+There is no deity worthy of worship except Allah alone, without partner. To Him belongs all sovereignty and praise, and He has power over all things.
+
+Reading schedule:
+
+**100x sepanjang hari**
+
+Counter:
+
+**DAILY COUNT: 0 / 100**
+
+Provide minus and plus buttons.
+
+Supporting caption:
+
+Counter accumulates throughout the day.
+
+---
+
+# 9. COUNTER FUNCTIONALITY
+
+There are six independent counters:
+
+| Recitation | Counter | Target |
+|---|---|---:|
+| Recitation 1 | Subuh | 3 |
+| Recitation 1 | Asar | 3 |
+| Recitation 2 | Subuh | 3 |
+| Recitation 2 | Asar | 3 |
+| Recitation 3 | Daily Count | 100 |
+
+All counters must be functional.
+
+Rules:
+
+- Plus increases the count by one.
+- Minus decreases the count by one.
+- Minimum value is zero.
+- Maximum values are determined by the respective targets.
+- Update the display immediately.
+- Store values using browser local storage.
+- Preserve counts after page refreshes and browser restarts.
+- Do not reset counts simply because the page is refreshed.
+
+## Daily reset
+
+Use the device's local calendar date.
+
+When a new local calendar day begins, reset all six counters to zero.
+
+Store the date associated with the counters so that the application can detect whether a new day has started.
+
+If the user leaves the application open across midnight, detect the date change and reset the counters when the application next becomes active.
+
+Do not synchronise counters between devices.
+
+---
+
+# 10. RESPONSIVE DESIGN
+
+The application must be fully responsive across desktop, tablet and mobile browsers.
+
+The uploaded V9 design is the desktop reference.
+
+Do not simply shrink the desktop layout to fit smaller screens.
+
+## Desktop
+
+For large screens:
+
+- Full-width header.
+- Audio Player section below header.
+- Three recitation cards displayed side by side.
+- All card content visible.
+- Consistent card heights where practical.
+- Comfortable spacing between cards.
+- No unnecessary horizontal scrolling.
+
+The desktop layout should closely resemble the uploaded V9 reference.
+
+## Tablet
+
+For tablet-sized screens:
+
+- Full-width header.
+- Audio player above the recitations.
+- Two-column card layout where space permits.
+- Remaining card placed on the next row.
+- Readable Arabic and translations.
+- Accessible counter controls.
+
+## Mobile
+
+For mobile phones:
+
+- Single-column layout.
+- Header, audio player and recitation cards stacked vertically.
+- Compact header.
+- Audio player fits within the screen width.
+- All three cards stacked vertically.
+- All card content remains visible.
+- Cards grow naturally according to their content.
+- Arabic text remains legible and does not overflow.
+- Translations wrap naturally.
+- Counter controls fit comfortably within narrow screens.
+- Large touch-friendly buttons.
+- Consistent spacing.
+- Normal vertical scrolling.
+
+Do not hide any recitation content on mobile.
+
+Do not introduce horizontal scrolling.
+
+Ensure the bottom of the third card is fully visible and accessible.
+
+Add sufficient bottom padding.
+
+---
+
+# 11. TECHNICAL IMPLEMENTATION
+
+Build a real working web application.
+
+Use:
+
+- Reusable components.
+- Clean and maintainable code.
+- Browser-supported audio playback.
+- Local storage for counter persistence.
+- Responsive CSS layouts.
+- Semantic HTML.
+- Accessible buttons and controls.
+
+Suggested component structure:
+
+- Application header.
+- Audio player.
+- Playback order.
+- Recitation section.
+- Individual recitation cards.
+- Counter controls.
+
+Suggested configuration structure:
+
+- Centralised audio asset mapping.
+- Centralised image asset mapping.
+- Centralised recitation content.
+
+Avoid hardcoding the same configuration in multiple places.
+
+Use suitable Arabic typography with correct right-to-left rendering.
+
+Ensure compatibility with modern desktop and mobile browsers, including Safari on iPhone.
+
+Do not introduce unnecessary libraries or dependencies.
+
+---
+
+# 12. FUTURE GITHUB INTEGRATION
+
+Prepare the application for future GitHub integration.
+
+Suggested project structure:
+
+daily-ruqyah-surah/
+|
+|-- public/
+|   |-- images/
+|   |   |-- Du'a For Full Protection.jpeg
+|   |   |-- Protection Against Evil Eye.jpeg
+|   |   |-- Daily_Dhikr.jpeg
+|   |
+|   |-- audio/
+|       |-- Ruqyah Ain.mpeg
+|       |-- Ruqyah Jin.mpeg
+|       |-- Surah Al-Baqarah.mpeg
+|
+|-- src/
+|   |-- components/
+|   |-- config/
+|   |-- data/
+|   |-- App
+|
+|-- package.json
+
+The actual audio files will be added later.
+
+The application must be structured so that adding the three audio files to `public/audio/` enables playback without requiring changes to the audio player logic.
+
+Do not introduce cloud storage or a backend for this first version.
+
+---
+
+# 13. FINAL ACCEPTANCE CHECKLIST
+
+Before completing development, verify:
+
+## Visual design
+1. Desktop design closely matches Concept V9.
+2. Header, audio player and recitation section are correctly arranged.
+3. All three recitation cards display their full content.
+4. All three reference images are used correctly.
+5. Colour palette and typography match the reference.
+
+## Recitations
+6. Arabic text renders correctly.
+7. Arabic uses right-to-left alignment.
+8. Romanized pronunciation is readable.
+9. Bahasa Melayu translations are visible.
+10. English translations are visible.
+
+## Counters
+11. All six counters work independently.
+12. Counters cannot go below zero.
+13. Counters cannot exceed their targets.
+14. Counter values persist after refreshing.
+15. Daily counters reset on a new local calendar day.
+16. Reset also works when the application is reopened after midnight.
+
+## Audio
+17. Player interface is fully implemented.
+18. Audio paths are centrally configurable.
+19. Audio 1 automatically transitions to Audio 2 when files are installed.
+20. Audio 2 automatically transitions to Audio 3.
+21. Audio 3 loops indefinitely.
+22. Restarting the sequence starts Audio 1 again.
+23. Progress bar and playback times update correctly.
+24. Missing audio files are handled gracefully.
+25. No fabricated playback duration or progress is displayed.
+
+## Responsive behaviour
+26. Desktop uses a three-column card layout.
+27. Tablet adapts appropriately.
+28. Mobile uses a single-column layout.
+29. No horizontal scrolling on mobile.
+30. No clipped cards or inaccessible controls.
+31. All content remains readable on smaller screens.
+
+---
+
+# FINAL INSTRUCTION
+
+Prioritise faithful implementation of the uploaded Desktop Concept V9 design.
+
+Build the complete working Daily Ruqyah and Surah application.
+
+Do not introduce expandable cards, additional dashboards, user accounts, cloud synchronisation or unrelated functionality in this version.
+
+The first version must deliver:
+
+- Accurate V9 visual design.
+- Fully displayed recitation cards.
+- Functional local daily counters.
+- Complete audio player and playback sequence logic, ready for future audio integration.
+- Responsive desktop, tablet and mobile layouts.
+
+Do not declare the build complete until the acceptance checklist has been tested.
