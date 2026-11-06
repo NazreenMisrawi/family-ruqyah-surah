@@ -461,6 +461,17 @@
       .card-top {
         cursor: pointer;
         align-items: center;
+        margin-bottom: 0;
+      }
+      .recitation-card {
+        min-height: 0;
+        height: auto;
+      }
+      .recitation-card:not(.expanded) .card-top {
+        margin-bottom: 0;
+      }
+      .recitations-grid {
+        align-items: start;
       }
     }
 
@@ -541,13 +552,13 @@
   </main>
 
   <footer class="version-footer">
-    Version <span id="appVersion">1.1.0</span><br>
+    Version <span id="appVersion">1.1.1</span><br>
     © 2026 Nazreen Misrawi
   </footer>
 
 
   <script>
-    const APP_VERSION = "1.1.0";
+    const APP_VERSION = "1.1.1";
 
     const AUDIO_TRACKS = [
       { id: 1, title: "Ruqyah Ain", filename: "Ruqyah Ain.mpeg", path: "public/audio/Ruqyah Ain.mpeg", description: "Plays first" },
