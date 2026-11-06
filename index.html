@@ -537,7 +537,7 @@
           <button class="btn" id="restartBtn" disabled>Restart Sequence</button>
         </div>
         <div class="audio-status" id="audioStatus">
-          Audio files are not yet configured. Playback will be available once the audio files are added.
+          Loading audio…
         </div>
       </div>
 
@@ -555,13 +555,13 @@
   </main>
 
   <footer class="version-footer">
-    Version <span id="appVersion">1.2.1</span><br>
+    Version <span id="appVersion">1.2.2</span><br>
     © 2026 Nazreen Misrawi
   </footer>
 
 
   <script>
-    const APP_VERSION = "1.2.1";
+    const APP_VERSION = "1.2.2";
 
     const AUDIO_TRACKS = [
       { id: 1, title: "Ruqyah Ain", filename: "Ruqyah Ain.mpeg", path: "public/audio/Ruqyah Ain.mpeg", description: "Plays first" },
@@ -626,13 +626,46 @@
     const DATE_KEY = "dailyRuqyahDate";
 
     function initAudio() {
-      const testAudio = new Audio();
-      testAudio.src = encodeURI(AUDIO_TRACKS[0].path);
-      testAudio.addEventListener('error', () => {
-        if (!audioAvailable) updateAudioUI();
-      });
-      testAudio.addEventListener('loadedmetadata', () => { audioAvailable = true; updateAudioUI(); });
-      updateAudioUI();
+      const statusEl = document.getElementById('audioStatus');
+      statusEl.textContent = 'Loading audio…';
+      statusEl.style.display = 'block';
+
+      let attempts = 0;
+      const maxAttempts = 2;
+
+      function tryLoad() {
+        attempts++;
+        const testAudio = new Audio();
+        testAudio.preload = 'metadata';
+        testAudio.src = encodeURI(AUDIO_TRACKS[0].path);
+
+        const timeout = setTimeout(() => {
+          if (!audioAvailable && attempts < maxAttempts) {
+            statusEl.textContent = 'Still loading… retrying';
+            tryLoad();
+          } else if (!audioAvailable) {
+            statusEl.textContent = 'Audio is taking longer than usual. Check your connection and refresh.';
+          }
+        }, 12000);
+
+        testAudio.addEventListener('loadedmetadata', () => {
+          clearTimeout(timeout);
+          audioAvailable = true;
+          updateAudioUI();
+        });
+
+        testAudio.addEventListener('error', () => {
+          clearTimeout(timeout);
+          if (attempts < maxAttempts) {
+            setTimeout(tryLoad, 1500);
+          } else if (!audioAvailable) {
+            statusEl.textContent = 'Could not load audio. Check your connection and refresh.';
+            updateAudioUI();
+          }
+        });
+      }
+
+      tryLoad();
       renderOrderList();
     }
 
@@ -679,6 +712,7 @@
       }
       audioElement = new Audio(encodeURI(track.path));
       audioElement.preload = 'metadata';
+      audioElement.preservesPitch = true;
       document.getElementById('currentTitle').textContent = track.title;
       document.getElementById('currentDesc').textContent = track.description;
       audioElement.addEventListener('loadedmetadata', () => {
