@@ -548,7 +548,9 @@
     function initAudio() {
       const testAudio = new Audio();
       testAudio.src = encodeURI(AUDIO_TRACKS[0].path);
-      testAudio.addEventListener('error', () => { audioAvailable = false; updateAudioUI(); });
+      testAudio.addEventListener('error', () => {
+        if (!audioAvailable) updateAudioUI();
+      });
       testAudio.addEventListener('loadedmetadata', () => { audioAvailable = true; updateAudioUI(); });
       updateAudioUI();
       renderOrderList();
@@ -590,7 +592,11 @@
       if (!audioAvailable) return;
       currentTrackIndex = index;
       const track = AUDIO_TRACKS[index];
-      if (audioElement) { audioElement.pause(); audioElement.src = ''; }
+      if (audioElement) {
+        audioElement.pause();
+        audioElement.removeAttribute('src');
+        audioElement.load();
+      }
       audioElement = new Audio(encodeURI(track.path));
       audioElement.preload = 'metadata';
       document.getElementById('currentTitle').textContent = track.title;
@@ -598,10 +604,14 @@
       audioElement.addEventListener('loadedmetadata', () => {
         document.getElementById('totalTime').textContent = formatTime(audioElement.duration) + ' total';
         updateProgress();
+        document.getElementById('audioStatus').style.display = 'none';
       });
       audioElement.addEventListener('timeupdate', updateProgress);
       audioElement.addEventListener('ended', onTrackEnded);
-      audioElement.addEventListener('error', () => { audioAvailable = false; updateAudioUI(); });
+      audioElement.addEventListener('error', (e) => {
+        console.warn('Audio load error for', track.filename, e);
+        // Do not permanently disable the player on a single track error
+      });
       if (autoplay) {
         audioElement.play().then(() => {
           isPlaying = true;
