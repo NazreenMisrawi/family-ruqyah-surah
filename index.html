@@ -476,6 +476,15 @@
       .controls { flex-wrap: wrap; }
       .btn { flex: 1; min-width: 120px; text-align: center; }
     }
+  
+    .version-footer {
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      padding: 0.5rem 1rem 1.5rem;
+      opacity: 0.7;
+    }
+
   </style>
 </head>
 <body>
@@ -531,7 +540,14 @@
     </section>
   </main>
 
+  <footer class="version-footer">
+    Version <span id="appVersion">1.1.0</span>
+  </footer>
+
+
   <script>
+    const APP_VERSION = "1.1.0";
+
     const AUDIO_TRACKS = [
       { id: 1, title: "Ruqyah Ain", filename: "Ruqyah Ain.mpeg", path: "public/audio/Ruqyah Ain.mpeg", description: "Plays first" },
       { id: 2, title: "Ruqyah Jin", filename: "Ruqyah Jin.mpeg", path: "public/audio/Ruqyah Jin.mpeg", description: "Automatically follows Ruqyah Ain" },
@@ -914,6 +930,7 @@
       if (document.visibilityState === 'visible') renderRecitations();
     });
 
+    document.getElementById("appVersion").textContent = APP_VERSION;
     initAudio();
     renderRecitations();
     if (window.attachImageClicks) window.attachImageClicks();
