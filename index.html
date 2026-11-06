@@ -434,6 +434,36 @@
     @media (max-width: 1100px) {
       .recitations-grid { grid-template-columns: repeat(2, 1fr); }
     }
+    
+    /* Expandable cards – mobile only */
+    .card-toggle {
+      display: none;
+      margin-left: auto;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: var(--primary);
+      cursor: pointer;
+      padding: 0.2rem 0.4rem;
+      line-height: 1;
+    }
+    .card-content {
+      display: block;
+    }
+    @media (max-width: 768px) {
+      .card-toggle { display: block; }
+      .card-content {
+        display: none;
+      }
+      .recitation-card.expanded .card-content {
+        display: block;
+      }
+      .card-top {
+        cursor: pointer;
+        align-items: center;
+      }
+    }
+
     @media (max-width: 768px) {
       .header-wrap, .container { padding-left: 1rem; padding-right: 1rem; }
       .header { border-radius: 12px; padding: 0.9rem 1.2rem; }
@@ -781,13 +811,15 @@
         }).join('');
         return `
           <article class="recitation-card">
-            <div class="card-top">
+            <div class="card-top" onclick="toggleCard(this)">
               <img src="${rec.image}" alt="${rec.title}" class="card-image" loading="lazy">
               <div class="card-heading">
                 <div class="recitation-number">${rec.number}</div>
                 <h3 class="recitation-title">${rec.title}</h3>
               </div>
+              <button class="card-toggle" aria-label="Expand">▼</button>
             </div>
+            <div class="card-content">
             <div class="section-label">Arabic</div>
             <div class="arabic">${rec.arabic}</div>
             <div class="section-label">Romanized</div>
@@ -801,6 +833,7 @@
               <div class="counter-group">${counterBlocks}</div>
               ${rec.caption ? `<div class="caption">${rec.caption}</div>` : ''}
               <button class="reset-btn" onclick="resetRecitation(${rec.id})">Reset</button>
+            </div>
             </div>
           </article>`;
       }).join('');
@@ -842,6 +875,16 @@
     }
     window.closeLightbox = closeLightbox;
     window.resetRecitation = resetRecitation;
+
+    function toggleCard(header) {
+      if (window.innerWidth > 768) return;
+      const card = header.closest('.recitation-card');
+      card.classList.toggle('expanded');
+      const btn = header.querySelector('.card-toggle');
+      if (btn) btn.textContent = card.classList.contains('expanded') ? '▲' : '▼';
+    }
+    window.toggleCard = toggleCard;
+
 
     // Attach image clicks after render
     function attachImageClicks() {
