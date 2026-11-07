@@ -555,13 +555,13 @@
   </main>
 
   <footer class="version-footer">
-    Version <span id="appVersion">1.3.0</span><br>
+    Version <span id="appVersion">1.3.1</span><br>
     © 2026 Nazreen Misrawi
   </footer>
 
 
   <script>
-    const APP_VERSION = "1.3.0";
+    const APP_VERSION = "1.3.1";
 
     const AUDIO_TRACKS = [
       { id: 1, title: "Ruqyah Ain", filename: "Ruqyah Ain.mpeg", path: "https://pub-894a3bd0828e4adeb21bf9292d46340f.r2.dev/Ruqyah%20Ain.mpeg", description: "Plays first" },
@@ -729,8 +729,10 @@
       audioElement.addEventListener('timeupdate', updateProgress);
       audioElement.addEventListener('ended', onTrackEnded);
       audioElement.addEventListener('error', (e) => {
-        console.warn('Audio load error for', track.filename, e);
-        // Do not permanently disable the player on a single track error
+        const mediaErr = audioElement.error;
+        const code = mediaErr ? mediaErr.code : 'unknown';
+        const msg = mediaErr ? mediaErr.message : '';
+        showAudioError('Audio failed to load: ' + track.filename, 'Error code: ' + code + (msg ? ' | ' + msg : ''));
       });
       if (autoplay) {
         audioElement.play().then(() => {
@@ -757,6 +759,18 @@
       }
     }
 
+    
+    function showAudioError(msg, detail) {
+      const full = detail ? msg + '\n\n' + detail : msg;
+      alert(full);
+      const statusEl = document.getElementById('audioStatus');
+      if (statusEl) {
+        statusEl.textContent = msg;
+        statusEl.style.display = 'block';
+      }
+      console.error(msg, detail || '');
+    }
+
     function togglePlay() {
       if (!audioAvailable) return;
       const statusEl = document.getElementById('audioStatus');
@@ -781,8 +795,8 @@
             document.getElementById('playBtn').textContent = 'Pause';
             statusEl.style.display = 'none';
           }).catch((err) => {
-            statusEl.textContent = 'Unable to start playback. Try again or check your connection.';
-            console.warn(err);
+            const detail = (err && err.name ? err.name + ': ' : '') + (err && err.message ? err.message : String(err));
+            showAudioError('Unable to start playback.', detail);
           });
         }
       }
