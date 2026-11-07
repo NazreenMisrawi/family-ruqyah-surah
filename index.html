@@ -555,13 +555,13 @@
   </main>
 
   <footer class="version-footer">
-    Version <span id="appVersion">1.3.1</span><br>
+    Version <span id="appVersion">1.3.2</span><br>
     © 2026 Nazreen Misrawi
   </footer>
 
 
   <script>
-    const APP_VERSION = "1.3.1";
+    const APP_VERSION = "1.3.2";
 
     const AUDIO_TRACKS = [
       { id: 1, title: "Ruqyah Ain", filename: "Ruqyah Ain.mpeg", path: "https://pub-894a3bd0828e4adeb21bf9292d46340f.r2.dev/Ruqyah%20Ain.mpeg", description: "Plays first" },
@@ -635,8 +635,9 @@
 
       function tryLoad() {
         attempts++;
-        const testAudio = new Audio();
+        const testAudio = document.createElement('audio');
         testAudio.preload = 'metadata';
+        testAudio.playsInline = true;
         // Only wait for metadata so playback can start while the rest streams
         testAudio.src = AUDIO_TRACKS[0].path;
 
@@ -716,9 +717,13 @@
         audioElement.removeAttribute('src');
         audioElement.load();
       }
-      audioElement = new Audio(track.path);
+      audioElement = document.createElement('audio');
       audioElement.preload = 'metadata';
-      audioElement.preservesPitch = true;
+      audioElement.playsInline = true;
+      const source = document.createElement('source');
+      source.src = track.path;
+      source.type = 'audio/mpeg';
+      audioElement.appendChild(source);
       document.getElementById('currentTitle').textContent = track.title;
       document.getElementById('currentDesc').textContent = track.description;
       audioElement.addEventListener('loadedmetadata', () => {
