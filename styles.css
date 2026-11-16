@@ -9,6 +9,65 @@
  * - Counters, buttons, and footer
  */
 
+
+/* Dark mode */
+[data-theme="dark"] {
+  --bg: #1A2420;
+  --primary: #2D6A4F;
+  --primary-dark: #1B4332;
+  --card: #24302A;
+  --text: #E8F0EC;
+  --text-secondary: #A8BDB4;
+  --border: #3A4A42;
+  --light-green: #1E3A2F;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+[data-theme="dark"] body { background: var(--bg); }
+[data-theme="dark"] .section-card,
+[data-theme="dark"] .recitation-card { background: var(--card); }
+[data-theme="dark"] .order-row { background: #1E2A26; }
+[data-theme="dark"] .counter-block { background: #1E2A26; }
+[data-theme="dark"] .counter-btn { background: #2A3832; color: var(--text); border-color: var(--border); }
+
+/* Theme toggle */
+.theme-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 100;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: var(--primary);
+  color: white;
+  font-size: 1.3rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.theme-toggle:hover { opacity: 0.9; }
+
+/* Buffer indicator */
+.buffer-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: rgba(255,255,255,0.35);
+  border-radius: 3px;
+  width: 0%;
+  pointer-events: none;
+}
+.loading-percent {
+  font-size: 0.75rem;
+  opacity: 0.8;
+  margin-top: 0.3rem;
+  text-align: center;
+}
+
 :root {
   --bg: #F6F1E8;
   --primary: #1B4D3E;
@@ -332,6 +391,9 @@ body {
   color: var(--primary);
 }
 .counter-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+@media (max-width: 768px) {
+  .counter-btn { width: 36px; height: 36px; font-size: 1.15rem; }
+}
 .caption { font-size: 0.72rem; color: var(--text-secondary); margin-top: 0.4rem; text-align: center; }
 .reset-btn {
   display: block;

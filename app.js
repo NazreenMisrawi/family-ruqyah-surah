@@ -1,6 +1,6 @@
 /**
  * Daily Ruqyah and Surah — Application Logic
- * Version 1.4.1
+ * Version 1.5.0
  *
  * Main features:
  * - Sequential audio player (Ruqyah Ain → Ruqyah Jin → Surah Al-Baqarah looping)
@@ -16,7 +16,7 @@
 
     
 // ─── Configuration ───────────────────────────────────────────
-const APP_VERSION = "1.4.1";
+const APP_VERSION = "1.5.0";
 
     const AUDIO_TRACKS = [
       { id: 1, title: "Ruqyah Ain", filename: "Ruqyah Ain.mpeg", path: "https://ruqyah-audio.nazreen-misrawi.workers.dev/Ruqyah%20Ain.mpeg", description: "Plays first" },
@@ -79,6 +79,8 @@ const APP_VERSION = "1.4.1";
 
     const STORAGE_KEY = "dailyRuqyahCounters";
     const DATE_KEY = "dailyRuqyahDate";
+const POSITION_KEY = "dailyRuqyahPosition";
+const THEME_KEY = "dailyRuqyahTheme";
 
     
 // ─── Audio Player ────────────────────────────────────────────
@@ -169,6 +171,96 @@ function updateAudioUI() {
 
     
 /** Formats seconds as m:ss */
+
+/**
+ * Updates the buffer indicator and loading percentage.
+ * Shows how much of the current track has been downloaded.
+ */
+function updateBuffer() {
+  if (!audioElement || !audioElement.buffered || !audioElement.duration) return;
+  const buffered = audioElement.buffered;
+  if (buffered.length > 0) {
+    const end = buffered.end(buffered.length - 1);
+    const percent = Math.min(100, (end / audioElement.duration) * 100);
+    const bufferBar = document.getElementById('bufferBar');
+    const loadingEl = document.getElementById('loadingPercent');
+    if (bufferBar) bufferBar.style.width = percent + '%';
+    if (loadingEl) {
+      loadingEl.textContent = percent < 100 ? `Buffered ${Math.round(percent)}%` : '';
+    }
+  }
+}
+
+/**
+ * Saves the current track index and playback position to localStorage.
+ * Used to resume after the phone is locked or the browser is closed.
+ */
+function savePosition() {
+  if (!audioElement || !audioAvailable) return;
+  const data = {
+    index: currentTrackIndex,
+    time: audioElement.currentTime || 0
+  };
+  try { localStorage.setItem(POSITION_KEY, JSON.stringify(data)); } catch (e) {}
+}
+
+/**
+ * Restores the last playback position if one was saved.
+ */
+function restorePosition() {
+  try {
+    const raw = localStorage.getItem(POSITION_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    if (typeof data.index === 'number' && data.index >= 0 && data.index < AUDIO_TRACKS.length) {
+      loadTrack(data.index, false);
+      if (audioElement && typeof data.time === 'number') {
+        audioElement.addEventListener('loadedmetadata', () => {
+          audioElement.currentTime = data.time;
+          updateProgress();
+        }, { once: true });
+      }
+    }
+  } catch (e) {}
+}
+
+/**
+ * Updates the Media Session API so the track title and controls
+ * appear on the lock screen and in Control Center.
+ */
+function updateMediaSession() {
+  if (!('mediaSession' in navigator) || !audioElement) return;
+  const track = AUDIO_TRACKS[currentTrackIndex];
+  navigator.mediaSession.metadata = new MediaMetadata({
+    title: track.title,
+    artist: 'Daily Ruqyah and Surah',
+    album: 'Family Listening'
+  });
+  navigator.mediaSession.setActionHandler('play', () => { if (!isPlaying) togglePlay(); });
+  navigator.mediaSession.setActionHandler('pause', () => { if (isPlaying) togglePlay(); });
+  navigator.mediaSession.setActionHandler('previoustrack', playPrevious);
+  navigator.mediaSession.setActionHandler('nexttrack', playNext);
+}
+
+/**
+ * Applies the saved theme (light or dark) and updates the toggle icon.
+ */
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  const btn = document.getElementById('themeToggle');
+  if (btn) btn.textContent = theme === 'dark' ? '☾' : '☀';
+  try { localStorage.setItem(THEME_KEY, theme); } catch (e) {}
+}
+
+/**
+ * Toggles between light and dark mode.
+ */
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') || 'light';
+  applyTheme(current === 'dark' ? 'light' : 'dark');
+}
+window.toggleTheme = toggleTheme;
+
 function formatTime(seconds) {
       if (!isFinite(seconds) || seconds < 0) return '0:00';
       const mins = Math.floor(seconds / 60);
@@ -200,12 +292,14 @@ function loadTrack(index, autoplay = false) {
       audioElement.appendChild(source);
       document.getElementById('currentTitle').textContent = track.title;
       document.getElementById('currentDesc').textContent = track.description;
+      updateMediaSession();
       audioElement.addEventListener('loadedmetadata', () => {
         document.getElementById('totalTime').textContent = formatTime(audioElement.duration) + ' total';
         updateProgress();
         document.getElementById('audioStatus').style.display = 'none';
       });
-      audioElement.addEventListener('timeupdate', updateProgress);
+      audioElement.addEventListener('timeupdate', () => { updateProgress(); savePosition(); });
+      audioElement.addEventListener('progress', updateBuffer);
       audioElement.addEventListener('ended', onTrackEnded);
       audioElement.addEventListener('pause', () => {
         // Sync UI if the OS or browser pauses the audio (lock screen, background, etc.)
@@ -572,6 +666,32 @@ document.addEventListener('visibilitychange', () => {
     });
 
     document.getElementById("appVersion").textContent = APP_VERSION;
+
+// ─── Keyboard Shortcuts ──────────────────────────────────────
+/**
+ * Space: play/pause
+ * Left/Right arrows: seek ±5 seconds
+ * Only active when not typing in an input.
+ */
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.code === 'Space') {
+    e.preventDefault();
+    togglePlay();
+  } else if (e.code === 'ArrowLeft' && audioElement) {
+    audioElement.currentTime = Math.max(0, audioElement.currentTime - 5);
+  } else if (e.code === 'ArrowRight' && audioElement) {
+    audioElement.currentTime = Math.min(audioElement.duration || 0, audioElement.currentTime + 5);
+  }
+});
+
+// ─── Theme ───────────────────────────────────────────────────
+const savedTheme = localStorage.getItem(THEME_KEY) || 'light';
+applyTheme(savedTheme);
+
+// Restore playback position on load
+if (audioAvailable) restorePosition();
+
 
     // Re-sync UI when the user returns to the app (lock screen, home screen app, etc.)
     document.addEventListener('visibilitychange', () => {

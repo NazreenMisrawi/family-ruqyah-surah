@@ -1,0 +1,21 @@
+{
+  "name": "Daily Ruqyah and Surah",
+  "short_name": "Ruqyah",
+  "description": "Family listening and daily recitation",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#F6F1E8",
+  "theme_color": "#1B4D3E",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
