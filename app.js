@@ -1,6 +1,6 @@
 /**
  * Daily Ruqyah and Surah — Application Logic
- * Version 1.4.0
+ * Version 1.4.1
  *
  * Main features:
  * - Sequential audio player (Ruqyah Ain → Ruqyah Jin → Surah Al-Baqarah looping)
@@ -16,12 +16,12 @@
 
     
 // ─── Configuration ───────────────────────────────────────────
-const APP_VERSION = "1.4.0";
+const APP_VERSION = "1.4.1";
 
     const AUDIO_TRACKS = [
-      { id: 1, title: "Ruqyah Ain", filename: "Ruqyah Ain.mpeg", path: "https://pub-894a3bd0828e4adeb21bf9292d46340f.r2.dev/Ruqyah%20Ain.mpeg", description: "Plays first" },
-      { id: 2, title: "Ruqyah Jin", filename: "Ruqyah Jin.mpeg", path: "https://pub-894a3bd0828e4adeb21bf9292d46340f.r2.dev/Ruqyah%20Jin.mpeg", description: "Automatically follows Ruqyah Ain" },
-      { id: 3, title: "Surah Al-Baqarah", filename: "Surah Al-Baqarah.mpeg", path: "https://pub-894a3bd0828e4adeb21bf9292d46340f.r2.dev/Surah%20Al-Baqarah.mpeg", description: "Repeats until sequence is restarted" }
+      { id: 1, title: "Ruqyah Ain", filename: "Ruqyah Ain.mpeg", path: "https://ruqyah-audio.nazreen-misrawi.workers.dev/Ruqyah%20Ain.mpeg", description: "Plays first" },
+      { id: 2, title: "Ruqyah Jin", filename: "Ruqyah Jin.mpeg", path: "https://ruqyah-audio.nazreen-misrawi.workers.dev/Ruqyah%20Jin.mpeg", description: "Automatically follows Ruqyah Ain" },
+      { id: 3, title: "Surah Al-Baqarah", filename: "Surah Al-Baqarah.mpeg", path: "https://ruqyah-audio.nazreen-misrawi.workers.dev/Surah%20Al-Baqarah.mpeg", description: "Repeats until sequence is restarted" }
     ];
 
     const RECITATIONS = [
