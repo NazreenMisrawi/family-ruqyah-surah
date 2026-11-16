@@ -16,7 +16,7 @@
 
     
 // ─── Configuration ───────────────────────────────────────────
-const APP_VERSION = "1.5.0";
+const APP_VERSION = "1.5.1";
 
     const AUDIO_TRACKS = [
       { id: 1, title: "Ruqyah Ain", filename: "Ruqyah Ain.mpeg", path: "https://ruqyah-audio.nazreen-misrawi.workers.dev/Ruqyah%20Ain.mpeg", description: "Plays first" },
