@@ -1,61 +1,63 @@
 # Daily Ruqyah and Surah
 
-Family listening & daily recitation web application.
+Family listening and daily recitation web application.
+
+Live site: https://nazreenmisrawi.github.io/family-ruqyah-surah/
+
+## Features
+
+- Sequential audio player (Ruqyah Ain → Ruqyah Jin → Surah Al-Baqarah looping)
+- Progress bar, buffer indicator, and seek
+- Resume playback position after lock screen or browser close
+- Media Session API (lock screen and Control Center controls)
+- Three recitation cards with Arabic, romanized, Bahasa Melayu, and English
+- Daily counters with localStorage and automatic daily reset
+- Mobile accordion for recitation cards
+- Image lightbox
+- Dark mode toggle
+- Keyboard shortcuts (Space = play/pause, arrows = seek)
+- PWA manifest and vector icon for Home Screen
+- Privacy and Terms pages
 
 ## Local Setup
 
-Place this entire folder at:
+Place this folder at:
 
 ```
 E:\Programming\Grok Build\Family Ruqyah Player
 ```
 
-Then open `index.html` in any modern browser, or serve the folder with a local server.
+Open `index.html` in a browser, or serve the folder with any static server.
 
-### Adding Audio Files
-
-Put these three files inside `public/audio/`:
-
-- `Ruqyah Ain.mpeg`
-- `Ruqyah Jin.mpeg`
-- `Surah Al-Baqarah.mpeg`
-
-Once added, the player will detect them automatically and enable playback.
-
-## GitHub Integration
-
-1. Create a new repository on GitHub (e.g. `family-ruqyah-surah`).
-2. In the local folder (`E:\Programming\Grok Build\Family Ruqyah Player`), run:
-
-```bash
-git init
-git add .
-git commit -m "Initial commit: Daily Ruqyah and Surah"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/family-ruqyah-surah.git
-git push -u origin main
-```
-
-3. Enable GitHub Pages (Settings → Pages → Deploy from branch → main / root) if you want it hosted.
+Audio is loaded from a Cloudflare R2 bucket via a Worker (no local audio files required for playback).
 
 ## Project Structure
 
 ```
 Family Ruqyah Player/
-├── index.html              # Complete application
+├── index.html              # Main page
+├── app.js                  # Application logic
+├── styles.css              # Styles
+├── privacy.html            # Privacy notice
+├── terms.html              # Terms of use
+├── manifest.json           # PWA manifest
+├── icon.svg                # Vector app icon
+├── icon-192.png            # PWA icon
+├── icon-512.png            # PWA icon
+├── favicon.png             # Favicon fallback
 ├── README.md
-├── package.json
-├── .gitignore
 ├── public/
-│   ├── images/             # Recitation images
-│   └── audio/              # Place the three .mpeg files here
-└── src/                    # Reserved for future modularisation
+│   ├── images/             # Recitation card images
+│   └── audio/              # Optional local audio backups
+└── src/                    # Reserved
 ```
 
-## Features
+## GitHub Pages
 
-- Sequential audio player (Audio 1 → Audio 2 → Audio 3 looping)
-- Three full recitation cards with Arabic, romanized, Malay, and English
-- Independent daily counters with localStorage and automatic daily reset
-- Responsive design matching Concept V9
-- Graceful handling when audio files are missing
+The site is deployed from the `uat` branch.
+
+Repository: https://github.com/NazreenMisrawi/family-ruqyah-surah
+
+## Version
+
+Current version: 1.5.1
